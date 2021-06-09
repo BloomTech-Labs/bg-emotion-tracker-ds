@@ -1,16 +1,16 @@
 """Database functions"""
-
 import os
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends
 import sqlalchemy
 
+
 router = APIRouter()
 
 
 async def get_db() -> sqlalchemy.engine.base.Connection:
-    """Get a SQLAlchemy database connection.
+    """ Get a SQLAlchemy database connection.
     
     Uses this environment variable if it exists:  
     DATABASE_URL=dialect://user:password@host/dbname
@@ -29,7 +29,7 @@ async def get_db() -> sqlalchemy.engine.base.Connection:
 
 @router.get('/info')
 async def get_url(connection=Depends(get_db)):
-    """Verify we can connect to the database, 
+    """ Verify we can connect to the database,
     and return the database URL in this format:
 
     dialect://user:password@host/dbname
