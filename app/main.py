@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app import db, ml, viz
+from app import viz
 
 
 description = """To use these interactive docs:
@@ -19,8 +19,6 @@ APP = FastAPI(
     version='0.36.0',
 )
 
-APP.include_router(db.router, tags=['Database'], prefix="/db",)
-APP.include_router(ml.router, tags=['Machine Learning'], prefix="/ml",)
 APP.include_router(viz.router, tags=['Visualization'], prefix="/vis",)
 
 APP.add_middleware(

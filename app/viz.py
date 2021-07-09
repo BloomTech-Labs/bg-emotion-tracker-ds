@@ -1,15 +1,15 @@
-"""Data visualization functions"""
 import pandas as pd
 from fastapi import APIRouter
 import plotly.graph_objects as go
 import plotly.express as px
 
-from app.db_ops import get_df
+from app.db import get_df
 
 router = APIRouter()
 
 
-def get_bar(df, col_1, col_2):
+def get_bar(df, col_1, col_2) -> go.Figure:
+    """ Plotly Bar Chart - Cross Tabs """
     col_1_name = col_1.replace('_', ' ').title()
     col_2_name = col_2.replace('_', ' ').title()
 
@@ -33,18 +33,14 @@ def get_bar(df, col_1, col_2):
     return go.Figure(data, layout)
 
 
-def get_pie(df, col, pie_type="Donut"):
+def get_pie(df, col) -> go.Figure:
+    """ Plotly Pie Chart """
     col_name = col.replace('_', ' ').title()
     vc_df = df[col].value_counts()
     labels = vc_df.index
     values = vc_df.values
     title = f"Percentage by {col_name}"
-    hole = {
-        "Solid": 0.0,
-        "Donut": 0.5,
-        "Ring": 0.8,
-    }[pie_type]
-    data = go.Pie(labels=labels, values=values, hole=hole)
+    data = go.Pie(labels=labels, values=values, hole=0.5)
     layout = go.Layout(
         title=title,
         colorway=px.colors.qualitative.Antique,
@@ -58,9 +54,11 @@ def get_pie(df, col, pie_type="Donut"):
 
 @router.get("/pie/{col}")
 def get_pie_chart(col: str):
+    """ Pie Chart API Endpoint - Returns JSON """
     return get_pie(get_df(), col).to_json()
 
 
 @router.get("/bar/{col1}/{col2}")
 def get_bar_chart(col1: str, col2: str):
+    """ Bar Chart API Endpoint - Returns JSON """
     return get_bar(get_df(), col1, col2).to_json()
