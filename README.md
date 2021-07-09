@@ -21,7 +21,7 @@
 - `db_query(sql_query: str) -> list`
     - Performs an SQL query and returns the result as a list
 - `get_df() -> pd.DataFrame`
-    - Gets the entire database as a pandas DataFrame
+    - Gets the database as a pandas DataFrame
 
 ## Developers
 - Robert Sharp
