@@ -23,5 +23,5 @@
 - `get_df() -> pd.DataFrame`
     - Gets the database as a pandas DataFrame
 
-## Developers
+## Labs 36 Developers
 - Robert Sharp
