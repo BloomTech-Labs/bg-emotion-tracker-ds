@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app import viz
+from app import vis
 
 
 description = """To use these interactive docs:
@@ -19,7 +19,7 @@ APP = FastAPI(
     version='0.36.0',
 )
 
-APP.include_router(viz.router, tags=['Visualization'], prefix="/vis",)
+APP.include_router(vis.router, tags=['Visualization'], prefix="/vis",)
 
 APP.add_middleware(
     CORSMiddleware,

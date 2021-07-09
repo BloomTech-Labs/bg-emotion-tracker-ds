@@ -8,7 +8,7 @@ from app.db import get_df
 router = APIRouter()
 
 
-def get_bar(df, col_1, col_2) -> go.Figure:
+def get_bar(df: pd.DataFrame, col_1: str, col_2: str) -> go.Figure:
     """ Plotly Bar Chart - Cross Tabs """
     col_1_name = col_1.replace('_', ' ').title()
     col_2_name = col_2.replace('_', ' ').title()
@@ -33,7 +33,7 @@ def get_bar(df, col_1, col_2) -> go.Figure:
     return go.Figure(data, layout)
 
 
-def get_pie(df, col) -> go.Figure:
+def get_pie(df: pd.DataFrame, col: str) -> go.Figure:
     """ Plotly Pie Chart """
     col_name = col.replace('_', ' ').title()
     vc_df = df[col].value_counts()
