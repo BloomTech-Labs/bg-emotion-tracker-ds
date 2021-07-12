@@ -1,13 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app import db, ml, viz
+from app import vis
 
 
-description = """
-Edit your app's title and description. See [https://fastapi.tiangolo.com/tutorial/metadata/](https://fastapi.tiangolo.com/tutorial/metadata/)
-
-To use these interactive docs:
+description = """To use these interactive docs:
 - Click on an endpoint below
 - Click the **Try it out** button
 - Edit the Request body or any parameters
@@ -15,18 +12,16 @@ To use these interactive docs:
 - Scroll down to see the Server response Code & Details
 """
 
-app = FastAPI(
-    title='DS API - Boy & Girls Club',
+APP = FastAPI(
+    title='DS API - Boys & Girls Club',
     description=description,
     docs_url='/',
-    version='0.35.0',
+    version='0.36.0',
 )
 
-app.include_router(db.router, tags=['Database'])
-app.include_router(ml.router, tags=['Machine Learning'])
-app.include_router(viz.router, tags=['Visualization'])
+APP.include_router(vis.router, tags=['Visualization'], prefix="/vis",)
 
-app.add_middleware(
+APP.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
     allow_credentials=True,
@@ -36,4 +31,4 @@ app.add_middleware(
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app)
+    uvicorn.run(APP)
