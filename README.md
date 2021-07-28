@@ -2,18 +2,17 @@
 
 ## Visualizations API `/app/vis.py`
 ### Graphing Functions
-- `get_bar(df: pd.DataFrame, col_1: str, col_2: str) -> go.Figure`
-    - Produces a cross tabs bar chart of two columns
-    - Y-axis: col_1
-    - X-axis: col_2
-- `get_pie(df: pd.DataFrame, col: str) -> go.Figure`
+- `get_pie_detail(df: pd.DataFrame, col: str) -> go.Figure`
     - Produces an aggregate pie chart of column value counts 
 
 ### API Endpoints
-- `/vis/pie/{col}` Get Pie Chart
-    - `col` param options: [club, activity, sentiment]
-- `/vis/bar/{col1}/{col2}` Get Bar Chart
-    - `col1` & `col2` param options: [club, activity, sentiment]
+- `/vis/pie/{club}/{activity}/{start}/{stop}`
+Produces a pie graph detailing the sentiment of a given activity for a given 
+club over an inclusive date range.
+    - `club` Club name
+    - `activity` Activity name
+    - `start` Start date "2021-07-27"
+    - `stop` Stop date "2021-07-28"
 
 ## Data Base Operations `/app/db.py`
 - `db_action(sql_action: str) -> None`
@@ -22,6 +21,18 @@
     - Performs an SQL query and returns the result as a list
 - `get_df() -> pd.DataFrame`
     - Gets the database as a pandas DataFrame
+- `emoji_lookup(s: str) -> str`
+    - Emoji lookup table. "1F603" -> "😃"
+- `get_club_df_by_date_range`
+- `get_club_activity_df_by_date_range`
 
-## Labs 36 Developers
-- Robert Sharp
+### Notes
+- Pie Chart: Club Activity Reactions by Percent
+    - Single Club
+    - Activity
+    - Date Range
+
+### Todo
+- All club Daily Checkin/Checkout Difference
+    - All Clubs
+    - Date

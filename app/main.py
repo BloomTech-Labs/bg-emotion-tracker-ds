@@ -16,7 +16,7 @@ APP = FastAPI(
     title='DS API - Boys & Girls Club',
     description=description,
     docs_url='/',
-    version='0.36.0',
+    version='0.36.1',
 )
 
 APP.include_router(vis.router, tags=['Visualization'], prefix="/vis",)
