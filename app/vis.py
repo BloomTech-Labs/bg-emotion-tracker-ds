@@ -2,63 +2,100 @@ import pandas as pd
 from fastapi import APIRouter
 import plotly.graph_objects as go
 import plotly.express as px
+import datetime as dt
 
-from app.db import get_df
+from app.db import get_club_activity_df_by_date_range, get_df
 
 router = APIRouter()
 
 
-def get_bar(df: pd.DataFrame, col_1: str, col_2: str) -> go.Figure:
-    """ Plotly Bar Chart - Cross Tabs """
-    col_1_name = col_1.replace('_', ' ').title()
-    col_2_name = col_2.replace('_', ' ').title()
-
-    if col_1_name == col_2_name:
-        title = f"{col_1_name} Totals"
-    else:
-        title = f"{col_2_name} by {col_1_name}"
-
-    df_cross = pd.crosstab(df[col_1], df[col_2])
-    data = [go.Bar(name=col, x=df_cross.index, y=df_cross[col])
-            for col in df_cross.columns]
-    layout = go.Layout(
-        title=title,
-        colorway=px.colors.qualitative.Antique,
-        height=600,
-        width=820,
-        barmode="stack",
-        yaxis={"title": f"{col_2_name} Counts"},
-        xaxis={'title': col_1_name}
-    )
-    return go.Figure(data, layout)
-
-
-def get_pie(df: pd.DataFrame, col: str) -> go.Figure:
+def get_pie_detail(df: pd.DataFrame, col: str) -> go.Figure:
     """ Plotly Pie Chart """
-    col_name = col.replace('_', ' ').title()
     vc_df = df[col].value_counts()
     labels = vc_df.index
     values = vc_df.values
-    title = f"Percentage by {col_name}"
-    data = go.Pie(labels=labels, values=values, hole=0.5)
+    data = go.Pie(
+        labels=labels,
+        values=values,
+        hole=0.5,
+    )
     layout = go.Layout(
-        title=title,
+        title="",
         colorway=px.colors.qualitative.Antique,
         height=640,
         width=820,
     )
     figure = go.Figure(data, layout)
-    figure.update_traces(textinfo='label+percent')
+    figure.update_traces(
+        textinfo='label',
+        textfont_size=48,
+    )
+    figure.update_layout(showlegend=False)
     return figure
 
 
-@router.get("/pie/{col}")
-def get_pie_chart(col: str):
-    """ Pie Chart API Endpoint - Returns JSON """
-    return get_pie(get_df(), col).to_json()
+@router.get("/pie/{club}/{activity}/{start}/{stop}")
+def get_pie(club: str, activity: str, start: str, stop: str):
+    """ Pie Chart API Endpoint - Returns JSON for Plotly.js """
+    df = get_club_activity_df_by_date_range(
+        club=club,
+        activity=activity,
+        start=start,
+        stop=stop,
+    )
+    figure = get_pie_detail(
+        df=df,
+        col='emoji',
+    )
+    return figure.to_json()
 
 
-@router.get("/bar/{col1}/{col2}")
-def get_bar_chart(col1: str, col2: str):
-    """ Bar Chart API Endpoint - Returns JSON """
-    return get_bar(get_df(), col1, col2).to_json()
+def get_bar_daily():
+    clubs = {
+        'Anderson',
+        'Catlin',
+        'Grossman',
+        'Jefferson',
+        'Johnston',
+        'Morton',
+        'Marley',
+        'Notter',
+        'Stelle',
+    }
+    df = get_df()
+    stop = dt.datetime.today()
+    start = stop - dt.timedelta(days=1)
+    df = df[(df['date'] >= start) & (df['date'] <= stop)]
+    club_results = {}
+    for club in clubs:
+        start = df[
+            (df['activity'] == 'Club Checkin') &
+            (df['club'] == club)
+            ].mean(numeric_only=True)[0]
+        stop = df[
+            (df['activity'] == 'Club Checkout') &
+            (df['club'] == club)
+            ].mean(numeric_only=True)[0]
+        average = stop - start
+        club_results[club] = average
+
+    result_df = pd.DataFrame(
+        club_results.values(),
+        index=club_results.keys(),
+        columns=["Daily Net Change"],
+    )
+    return result_df
+
+
+@router.get("/daily/")
+def get_daily():
+    df = get_bar_daily()
+    data = go.Bar(x=df.index, y=df["Daily Net Change"])
+    layout = go.Layout(
+        title="Sentiment: Daily Net Change",
+        height=600,
+        width=820,
+        yaxis={"title": "Checkin/Checkout Difference"},
+        xaxis={'title': "B&G Clubs"},
+    )
+    return go.Figure(data, layout).to_json()
