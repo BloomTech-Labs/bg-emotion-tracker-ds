@@ -90,7 +90,10 @@ def get_bar_daily():
 @router.get("/daily/")
 def get_daily():
     df = get_bar_daily()
-    data = go.Bar(x=df.index, y=df["Daily Net Change"])
+    data = go.Bar(
+        x=[f"<a href='/{club}'>{club}</a>" for club in df.index],
+        y=df["Daily Net Change"],
+    )
     layout = go.Layout(
         title="Sentiment: Daily Net Change",
         height=600,
