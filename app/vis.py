@@ -47,7 +47,7 @@ def get_pie(club: str, activity: str, start: str, stop: str):
         df=df,
         col='emoji',
     )
-    return figure.to_json()
+    return figure.to_dict()
 
 
 def get_bar_daily():
@@ -101,4 +101,4 @@ def get_daily():
         yaxis={"title": "Checkin/Checkout Difference"},
         xaxis={'title': "B&G Clubs"},
     )
-    return go.Figure(data, layout).to_json()
+    return go.Figure(data, layout).to_dict()
