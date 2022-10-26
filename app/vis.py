@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 from fastapi import APIRouter
 import plotly.graph_objects as go
@@ -47,7 +49,7 @@ def get_pie(club: str, activity: str, start: str, stop: str):
         df=df,
         col='emoji',
     )
-    return figure.to_dict()
+    return json.loads(figure.to_json())
 
 
 def get_bar_daily():
@@ -101,4 +103,4 @@ def get_daily():
         yaxis={"title": "Checkin/Checkout Difference"},
         xaxis={'title': "B&G Clubs"},
     )
-    return go.Figure(data, layout).to_dict()
+    return json.loads(go.Figure(data, layout).to_json())
